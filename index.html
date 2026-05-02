@@ -1,0 +1,1663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Placement Prep Tracker</title>
+  <style>
+    :root {
+      --bg-deep: #0a0a0f;
+      --bg-card: #12121a;
+      --bg-elevated: #1a1a26;
+      --border: rgba(124, 58, 237, 0.25);
+      --neon: #00ff88;
+      --purple: #7c3aed;
+      --purple-dim: rgba(124, 58, 237, 0.15);
+      --text: #e8e8ef;
+      --text-muted: #8888a0;
+      --red: #ff4466;
+      --yellow: #ffcc00;
+      --green: #00ff88;
+      --radius: 14px;
+      --shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+      --font: "Segoe UI", system-ui, -apple-system, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg-deep);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 20% -10%, rgba(124, 58, 237, 0.18), transparent),
+        radial-gradient(ellipse 60% 40% at 100% 100%, rgba(0, 255, 136, 0.06), transparent);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .app {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 260px;
+      flex-shrink: 0;
+      background: linear-gradient(180deg, #101018 0%, #0c0c12 100%);
+      border-right: 1px solid var(--border);
+      padding: 1.5rem 0;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .sidebar-brand {
+      padding: 0 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1rem;
+    }
+
+    .sidebar-brand h1 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--neon), var(--purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .sidebar-brand p {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.35rem;
+    }
+
+    .nav-links {
+      list-style: none;
+      padding: 0 0.75rem;
+      flex: 1;
+    }
+
+    .nav-links li {
+      margin-bottom: 0.35rem;
+    }
+
+    .nav-links a {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      padding: 0.75rem 1rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      transition: color 0.2s, background 0.2s, transform 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: var(--text);
+      background: var(--purple-dim);
+    }
+
+    .nav-links a.active {
+      color: var(--neon);
+      background: rgba(0, 255, 136, 0.08);
+      box-shadow: inset 0 0 0 1px rgba(0, 255, 136, 0.2);
+    }
+
+    .nav-links a span.icon {
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+
+    .menu-toggle {
+      display: none;
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      z-index: 100;
+      width: 48px;
+      height: 48px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--bg-card);
+      color: var(--neon);
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      box-shadow: var(--shadow);
+    }
+
+    /* Main */
+    .main {
+      flex: 1;
+      padding: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .section {
+      display: none;
+      animation: fadeSlide 0.45s ease forwards;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    @keyframes fadeSlide {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .section-header {
+      margin-bottom: 1.75rem;
+    }
+
+    .section-header h2 {
+      font-size: 1.65rem;
+      font-weight: 700;
+      margin-bottom: 0.35rem;
+    }
+
+    .section-header p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.5rem;
+      box-shadow: var(--shadow);
+      transition: border-color 0.25s, box-shadow 0.25s;
+    }
+
+    .card:hover {
+      border-color: rgba(124, 58, 237, 0.4);
+    }
+
+    /* Forms */
+    .form-grid {
+      display: grid;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .form-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: flex-end;
+    }
+
+    label {
+      display: block;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      margin-bottom: 0.35rem;
+    }
+
+    input, select, textarea {
+      font-family: inherit;
+      font-size: 0.95rem;
+      padding: 0.65rem 0.85rem;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--bg-elevated);
+      color: var(--text);
+      width: 100%;
+      max-width: 280px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--purple);
+      box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.25);
+    }
+
+    textarea {
+      max-width: 100%;
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .btn {
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 600;
+      padding: 0.65rem 1.25rem;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.2s, opacity 0.2s;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--purple), #5b21b6);
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(124, 58, 237, 0.35);
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 6px 28px rgba(124, 58, 237, 0.45);
+    }
+
+    .btn-neon {
+      background: rgba(0, 255, 136, 0.15);
+      color: var(--neon);
+      border: 1px solid rgba(0, 255, 136, 0.4);
+    }
+
+    .btn-neon:hover {
+      background: rgba(0, 255, 136, 0.25);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+
+    .btn-ghost:hover {
+      color: var(--text);
+      border-color: var(--purple);
+    }
+
+    .btn-danger {
+      background: rgba(255, 68, 102, 0.15);
+      color: var(--red);
+      border: 1px solid rgba(255, 68, 102, 0.35);
+      padding: 0.4rem 0.75rem;
+      font-size: 0.8rem;
+    }
+
+    .btn-danger:hover {
+      background: rgba(255, 68, 102, 0.28);
+    }
+
+    .btn-sm {
+      padding: 0.4rem 0.75rem;
+      font-size: 0.8rem;
+    }
+
+    /* DSA */
+    .progress-wrap {
+      margin-bottom: 1.5rem;
+    }
+
+    .progress-bar-outer {
+      height: 12px;
+      background: var(--bg-elevated);
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .progress-bar-inner {
+      height: 100%;
+      background: linear-gradient(90deg, var(--purple), var(--neon));
+      border-radius: 999px;
+      transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 0 20px rgba(0, 255, 136, 0.35);
+    }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    .dsa-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+
+    .dsa-topic {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem 1.15rem;
+      transition: transform 0.25s, border-color 0.25s;
+    }
+
+    .dsa-topic:hover {
+      transform: translateY(-2px);
+      border-color: rgba(0, 255, 136, 0.2);
+    }
+
+    .dsa-topic h4 {
+      font-size: 0.95rem;
+      margin-bottom: 0.85rem;
+      color: var(--text);
+    }
+
+    .status-btns {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+
+    .status-btns button {
+      flex: 1;
+      min-width: 72px;
+      padding: 0.45rem 0.5rem;
+      font-size: 0.7rem;
+      font-weight: 600;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s, transform 0.15s;
+    }
+
+    .status-btns button.not-started {
+      background: rgba(255, 68, 102, 0.12);
+      color: var(--red);
+      border-color: rgba(255, 68, 102, 0.35);
+    }
+
+    .status-btns button.not-started.active {
+      background: rgba(255, 68, 102, 0.35);
+      box-shadow: 0 0 12px rgba(255, 68, 102, 0.25);
+    }
+
+    .status-btns button.in-progress {
+      background: rgba(255, 204, 0, 0.12);
+      color: var(--yellow);
+      border-color: rgba(255, 204, 0, 0.4);
+    }
+
+    .status-btns button.in-progress.active {
+      background: rgba(255, 204, 0, 0.3);
+      box-shadow: 0 0 12px rgba(255, 204, 0, 0.2);
+    }
+
+    .status-btns button.done {
+      background: rgba(0, 255, 136, 0.1);
+      color: var(--green);
+      border-color: rgba(0, 255, 136, 0.4);
+    }
+
+    .status-btns button.done.active {
+      background: rgba(0, 255, 136, 0.28);
+      box-shadow: 0 0 14px rgba(0, 255, 136, 0.25);
+    }
+
+    /* Wishlist */
+    .filter-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .filter-pills button {
+      padding: 0.4rem 0.9rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--bg-elevated);
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .filter-pills button.active {
+      border-color: var(--neon);
+      color: var(--neon);
+      background: rgba(0, 255, 136, 0.08);
+    }
+
+    .wishlist-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1rem;
+    }
+
+    .wish-card {
+      border-radius: var(--radius);
+      padding: 1.15rem;
+      border: 1px solid var(--border);
+      position: relative;
+      transition: transform 0.25s, box-shadow 0.25s;
+    }
+
+    .wish-card:hover {
+      transform: translateY(-3px);
+    }
+
+    .wish-card.dream {
+      background: linear-gradient(145deg, rgba(124, 58, 237, 0.2), var(--bg-card));
+      border-color: rgba(124, 58, 237, 0.5);
+      box-shadow: 0 0 24px rgba(124, 58, 237, 0.12);
+    }
+
+    .wish-card.target {
+      background: linear-gradient(145deg, rgba(0, 255, 136, 0.08), var(--bg-card));
+      border-color: rgba(0, 255, 136, 0.35);
+    }
+
+    .wish-card.backup {
+      background: var(--bg-card);
+      border-color: rgba(136, 136, 160, 0.35);
+    }
+
+    .wish-card .priority-badge {
+      display: inline-block;
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 0.2rem 0.5rem;
+      border-radius: 6px;
+      margin-bottom: 0.65rem;
+    }
+
+    .wish-card.dream .priority-badge {
+      background: rgba(124, 58, 237, 0.35);
+      color: #c4b5fd;
+    }
+
+    .wish-card.target .priority-badge {
+      background: rgba(0, 255, 136, 0.2);
+      color: var(--neon);
+    }
+
+    .wish-card.backup .priority-badge {
+      background: rgba(136, 136, 160, 0.25);
+      color: var(--text-muted);
+    }
+
+    .wish-card h4 {
+      font-size: 1.05rem;
+      margin-bottom: 0.35rem;
+    }
+
+    .wish-card .role {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+    }
+
+    /* LeetCode table */
+    .stats-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .stat-chip {
+      padding: 0.65rem 1.1rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 0.9rem;
+    }
+
+    .stat-chip strong {
+      color: var(--neon);
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    th {
+      text-align: left;
+      padding: 0.85rem 1rem;
+      background: var(--bg-elevated);
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    td {
+      padding: 0.75rem 1rem;
+      border-top: 1px solid var(--border);
+    }
+
+    tr:hover td {
+      background: rgba(124, 58, 237, 0.06);
+    }
+
+    .diff-easy {
+      color: #4ade80;
+      font-weight: 600;
+    }
+
+    .diff-medium {
+      color: var(--yellow);
+      font-weight: 600;
+    }
+
+    .diff-hard {
+      color: var(--red);
+      font-weight: 600;
+    }
+
+    .badge-solved {
+      color: var(--neon);
+    }
+
+    .badge-unsolved {
+      color: var(--text-muted);
+    }
+
+    /* Interview notes */
+    .interview-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .interview-card {
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      transition: border-color 0.25s;
+    }
+
+    .interview-card.outcome-selected {
+      border-left: 4px solid var(--neon);
+      background: linear-gradient(90deg, rgba(0, 255, 136, 0.06), var(--bg-card));
+    }
+
+    .interview-card.outcome-rejected {
+      border-left: 4px solid var(--red);
+      background: linear-gradient(90deg, rgba(255, 68, 102, 0.06), var(--bg-card));
+    }
+
+    .interview-card.outcome-pending {
+      border-left: 4px solid var(--yellow);
+      background: linear-gradient(90deg, rgba(255, 204, 0, 0.06), var(--bg-card));
+    }
+
+    .interview-head {
+      padding: 1rem 1.15rem;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .interview-head:hover {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .interview-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    .interview-meta strong {
+      font-size: 1rem;
+    }
+
+    .interview-meta span {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .outcome-tag {
+      font-size: 0.75rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+
+    .outcome-tag.selected {
+      background: rgba(0, 255, 136, 0.2);
+      color: var(--neon);
+    }
+
+    .outcome-tag.rejected {
+      background: rgba(255, 68, 102, 0.2);
+      color: var(--red);
+    }
+
+    .outcome-tag.pending {
+      background: rgba(255, 204, 0, 0.2);
+      color: var(--yellow);
+    }
+
+    .chevron {
+      transition: transform 0.3s;
+      color: var(--purple);
+      font-size: 1.1rem;
+    }
+
+    .interview-card.open .chevron {
+      transform: rotate(180deg);
+    }
+
+    .interview-body {
+      display: none;
+      padding: 0 1.15rem 1.15rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .interview-card.open .interview-body {
+      display: block;
+      animation: fadeSlide 0.3s ease;
+    }
+
+    .interview-body p {
+      margin-top: 0.75rem;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      white-space: pre-wrap;
+    }
+
+    /* Mock scheduler */
+    .mock-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+
+    .mock-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.15rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .mock-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--purple), var(--neon));
+    }
+
+    .mock-card.done {
+      opacity: 0.65;
+    }
+
+    .mock-card.done::before {
+      background: var(--text-muted);
+    }
+
+    .mock-date-box {
+      display: flex;
+      align-items: baseline;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .mock-day {
+      font-size: 2rem;
+      font-weight: 800;
+      line-height: 1;
+      color: var(--neon);
+    }
+
+    .mock-month-year {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .countdown {
+      font-size: 0.8rem;
+      color: var(--purple);
+      margin-bottom: 0.75rem;
+      font-weight: 600;
+    }
+
+    .mock-detail {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 0.35rem;
+    }
+
+    .mock-detail strong {
+      color: var(--text);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 2.5rem 1rem;
+      color: var(--text-muted);
+      border: 1px dashed var(--border);
+      border-radius: var(--radius);
+    }
+
+    /* Daily notes */
+    .notes-history {
+      margin-top: 2rem;
+    }
+
+    .notes-history h3 {
+      font-size: 1.1rem;
+      margin-bottom: 1rem;
+      color: var(--text-muted);
+    }
+
+    .note-day {
+      border-left: 3px solid var(--purple);
+      padding: 0.75rem 1rem;
+      margin-bottom: 0.75rem;
+      background: var(--bg-card);
+      border-radius: 0 var(--radius) var(--radius) 0;
+      border: 1px solid var(--border);
+      border-left-width: 3px;
+    }
+
+    .note-day .date-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--neon);
+      margin-bottom: 0.35rem;
+    }
+
+    .note-day p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      white-space: pre-wrap;
+    }
+
+    .note-day.empty-note {
+      opacity: 0.5;
+      font-style: italic;
+    }
+
+    /* Overlay mobile */
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 90;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .sidebar-overlay.visible {
+      display: block;
+      opacity: 1;
+    }
+
+    @media (max-width: 900px) {
+      .menu-toggle {
+        display: flex;
+      }
+
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        z-index: 95;
+        transform: translateX(-100%);
+        box-shadow: var(--shadow);
+      }
+
+      .sidebar.open {
+        transform: translateX(0);
+      }
+
+      .main {
+        padding: 4.5rem 1.25rem 2rem;
+      }
+
+      .form-row input,
+      .form-row select {
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <button type="button" class="menu-toggle" id="menuToggle" aria-label="Open menu">☰</button>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <div class="app">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <h1>Placement Prep</h1>
+        <p>Track · Practice · Succeed</p>
+      </div>
+      <ul class="nav-links">
+        <li><a href="#dsa" data-section="dsa" class="active"><span class="icon">◆</span> DSA Topics</a></li>
+        <li><a href="#wishlist" data-section="wishlist"><span class="icon">★</span> Company Wishlist</a></li>
+        <li><a href="#leetcode" data-section="leetcode"><span class="icon">□</span> LeetCode</a></li>
+        <li><a href="#interviews" data-section="interviews"><span class="icon">◇</span> Interview Notes</a></li>
+        <li><a href="#mocks" data-section="mocks"><span class="icon">◎</span> Mock Interviews</a></li>
+        <li><a href="#notes" data-section="notes"><span class="icon">✎</span> Daily Notes</a></li>
+      </ul>
+    </aside>
+
+    <main class="main">
+      <!-- DSA -->
+      <section id="section-dsa" class="section active">
+        <div class="section-header">
+          <h2>DSA Topic Tracker</h2>
+          <p>Mark each topic as not started, in progress, or done.</p>
+        </div>
+        <div class="progress-wrap card">
+          <div class="progress-label">
+            <span>Overall progress</span>
+            <span id="dsaPercent">0%</span>
+          </div>
+          <div class="progress-bar-outer">
+            <div class="progress-bar-inner" id="dsaBar" style="width: 0%"></div>
+          </div>
+        </div>
+        <div class="dsa-grid" id="dsaGrid"></div>
+      </section>
+
+      <!-- Wishlist -->
+      <section id="section-wishlist" class="section">
+        <div class="section-header">
+          <h2>Company Wishlist</h2>
+          <p>Prioritize roles you are targeting.</p>
+        </div>
+        <div class="card form-grid">
+          <div class="form-row">
+            <div>
+              <label for="coName">Company</label>
+              <input type="text" id="coName" placeholder="e.g. Acme Corp" />
+            </div>
+            <div>
+              <label for="coRole">Role</label>
+              <select id="coRole">
+                <option value="SDE">SDE</option>
+                <option value="Analyst">Analyst</option>
+                <option value="Data Engineer">Data Engineer</option>
+                <option value="Product">Product</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div>
+              <label for="coPriority">Priority</label>
+              <select id="coPriority">
+                <option value="Dream">Dream</option>
+                <option value="Target">Target</option>
+                <option value="Backup">Backup</option>
+              </select>
+            </div>
+            <button type="button" class="btn btn-primary" id="addCompany">Add company</button>
+          </div>
+        </div>
+        <div class="filter-pills" id="wishFilters">
+          <button type="button" data-filter="all" class="active">All</button>
+          <button type="button" data-filter="Dream">Dream</button>
+          <button type="button" data-filter="Target">Target</button>
+          <button type="button" data-filter="Backup">Backup</button>
+        </div>
+        <div class="wishlist-grid" id="wishlistGrid"></div>
+      </section>
+
+      <!-- LeetCode -->
+      <section id="section-leetcode" class="section">
+        <div class="section-header">
+          <h2>LeetCode Problem Tracker</h2>
+          <p>Log problems with difficulty, topic, and solve status.</p>
+        </div>
+        <div class="stats-row">
+          <div class="stat-chip">Solved: <strong id="lcSolved">0</strong> / <span id="lcTotal">0</span></div>
+        </div>
+        <div class="card form-grid">
+          <div class="form-row">
+            <div>
+              <label for="lcName">Problem name</label>
+              <input type="text" id="lcName" placeholder="Two Sum" />
+            </div>
+            <div>
+              <label for="lcDiff">Difficulty</label>
+              <select id="lcDiff">
+                <option value="Easy">Easy</option>
+                <option value="Medium">Medium</option>
+                <option value="Hard">Hard</option>
+              </select>
+            </div>
+            <div>
+              <label for="lcTopic">Topic tag</label>
+              <input type="text" id="lcTopic" placeholder="Array, Hashing…" />
+            </div>
+            <div>
+              <label for="lcStatus">Status</label>
+              <select id="lcStatus">
+                <option value="Solved">Solved</option>
+                <option value="Unsolved">Unsolved</option>
+              </select>
+            </div>
+            <button type="button" class="btn btn-primary" id="addLc">Add problem</button>
+          </div>
+        </div>
+        <div class="form-row" style="margin-bottom: 1rem;">
+          <div>
+            <label for="filterDiff">Filter difficulty</label>
+            <select id="filterDiff">
+              <option value="all">All</option>
+              <option value="Easy">Easy</option>
+              <option value="Medium">Medium</option>
+              <option value="Hard">Hard</option>
+            </select>
+          </div>
+          <div>
+            <label for="filterStatus">Filter status</label>
+            <select id="filterStatus">
+              <option value="all">All</option>
+              <option value="Solved">Solved</option>
+              <option value="Unsolved">Unsolved</option>
+            </select>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Problem</th>
+                <th>Difficulty</th>
+                <th>Topic</th>
+                <th>Status</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="lcTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Interviews -->
+      <section id="section-interviews" class="section">
+        <div class="section-header">
+          <h2>Interview Experience Notes</h2>
+          <p>Capture rounds, questions, and outcomes.</p>
+        </div>
+        <div class="card form-grid">
+          <div class="form-row">
+            <div>
+              <label for="intCompany">Company</label>
+              <input type="text" id="intCompany" />
+            </div>
+            <div>
+              <label for="intDate">Interview date</label>
+              <input type="date" id="intDate" />
+            </div>
+            <div>
+              <label for="intRound">Round</label>
+              <select id="intRound">
+                <option value="HR">HR</option>
+                <option value="Technical">Technical</option>
+                <option value="Coding">Coding</option>
+              </select>
+            </div>
+            <div>
+              <label for="intOutcome">Outcome</label>
+              <select id="intOutcome">
+                <option value="Pending">Pending</option>
+                <option value="Selected">Selected</option>
+                <option value="Rejected">Rejected</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label for="intAsked">What was asked</label>
+            <textarea id="intAsked" placeholder="Questions, topics, feedback…"></textarea>
+          </div>
+          <button type="button" class="btn btn-primary" id="addInterview">Save experience</button>
+        </div>
+        <div class="interview-list" id="interviewList"></div>
+      </section>
+
+      <!-- Mocks -->
+      <section id="section-mocks" class="section">
+        <div class="section-header">
+          <h2>Mock Interview Scheduler</h2>
+          <p>Schedule practice sessions and track countdowns.</p>
+        </div>
+        <div class="card form-grid">
+          <div class="form-row">
+            <div>
+              <label for="mockDate">Date</label>
+              <input type="date" id="mockDate" />
+            </div>
+            <div>
+              <label for="mockTime">Time</label>
+              <input type="time" id="mockTime" />
+            </div>
+            <div>
+              <label for="mockWith">With whom</label>
+              <select id="mockWith">
+                <option value="Friend">Friend</option>
+                <option value="Self">Self</option>
+                <option value="Online Platform">Online Platform</option>
+              </select>
+            </div>
+            <div>
+              <label for="mockTopic">Topic</label>
+              <input type="text" id="mockTopic" placeholder="Trees, System Design…" />
+            </div>
+            <button type="button" class="btn btn-primary" id="addMock">Schedule mock</button>
+          </div>
+        </div>
+        <div class="mock-grid" id="mockGrid"></div>
+      </section>
+
+      <!-- Daily notes -->
+      <section id="section-notes" class="section">
+        <div class="section-header">
+          <h2>Daily Notes</h2>
+          <p>Jot down wins, learnings, and todos for today.</p>
+        </div>
+        <div class="card">
+          <label for="dailyNoteInput">Today’s note</label>
+          <textarea id="dailyNoteInput" placeholder="What did you practice? What will you do tomorrow?"></textarea>
+          <div style="margin-top: 1rem;">
+            <button type="button" class="btn btn-neon" id="saveDailyNote">Save note</button>
+          </div>
+        </div>
+        <div class="notes-history">
+          <h3>Last 7 days</h3>
+          <div id="notesHistory"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+(function () {
+  const STORAGE = {
+    dsa: "ppt_dsa_v1",
+    wishlist: "ppt_wishlist_v1",
+    leetcode: "ppt_leetcode_v1",
+    interviews: "ppt_interviews_v1",
+    mocks: "ppt_mocks_v1",
+    dailyNotes: "ppt_daily_notes_v1"
+  };
+
+  const DSA_TOPICS = [
+    "Arrays", "Strings", "Linked List", "Stack", "Queue", "Trees", "Graphs",
+    "Dynamic Programming", "Recursion", "Sorting", "Searching", "Greedy",
+    "Backtracking", "Bit Manipulation", "Hashing"
+  ];
+
+  function uid() {
+    return Date.now().toString(36) + Math.random().toString(36).slice(2, 9);
+  }
+
+  function load(key, fallback) {
+    try {
+      const raw = localStorage.getItem(key);
+      if (raw === null) return fallback;
+      return JSON.parse(raw);
+    } catch {
+      return fallback;
+    }
+  }
+
+  function save(key, data) {
+    localStorage.setItem(key, JSON.stringify(data));
+  }
+
+  function getDsaState() {
+    let state = load(STORAGE.dsa, null);
+    if (!state || typeof state !== "object") {
+      state = {};
+      DSA_TOPICS.forEach((t) => {
+        state[t] = "not-started";
+      });
+      save(STORAGE.dsa, state);
+    } else {
+      DSA_TOPICS.forEach((t) => {
+        if (!state[t]) state[t] = "not-started";
+      });
+    }
+    return state;
+  }
+
+  function setDsaStatus(topic, status) {
+    const state = getDsaState();
+    state[topic] = status;
+    save(STORAGE.dsa, state);
+    renderDsa();
+  }
+
+  function renderDsa() {
+    const state = getDsaState();
+    const total = DSA_TOPICS.length;
+    const done = DSA_TOPICS.filter((t) => state[t] === "done").length;
+    const pct = Math.round((done / total) * 100);
+    document.getElementById("dsaPercent").textContent = pct + "%";
+    document.getElementById("dsaBar").style.width = pct + "%";
+
+    const grid = document.getElementById("dsaGrid");
+    grid.innerHTML = DSA_TOPICS.map((topic) => {
+      const s = state[topic] || "not-started";
+      return `
+        <div class="dsa-topic">
+          <h4>${escapeHtml(topic)}</h4>
+          <div class="status-btns">
+            <button type="button" class="not-started ${s === "not-started" ? "active" : ""}" data-topic="${escapeAttr(topic)}" data-status="not-started">Not Started</button>
+            <button type="button" class="in-progress ${s === "in-progress" ? "active" : ""}" data-topic="${escapeAttr(topic)}" data-status="in-progress">In Progress</button>
+            <button type="button" class="done ${s === "done" ? "active" : ""}" data-topic="${escapeAttr(topic)}" data-status="done">Done</button>
+          </div>
+        </div>`;
+    }).join("");
+
+    grid.querySelectorAll(".status-btns button").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        setDsaStatus(btn.dataset.topic, btn.dataset.status);
+      });
+    });
+  }
+
+  let wishFilter = "all";
+
+  function getWishlist() {
+    return load(STORAGE.wishlist, []);
+  }
+
+  function setWishlist(list) {
+    save(STORAGE.wishlist, list);
+  }
+
+  function renderWishlist() {
+    const list = getWishlist();
+    const filtered = wishFilter === "all"
+      ? list
+      : list.filter((c) => c.priority === wishFilter);
+    const grid = document.getElementById("wishlistGrid");
+    if (!filtered.length) {
+      grid.innerHTML = '<p class="empty-state">No companies yet. Add one above.</p>';
+      return;
+    }
+    const cls = { Dream: "dream", Target: "target", Backup: "backup" };
+    grid.innerHTML = filtered.map((c) => `
+      <div class="wish-card ${cls[c.priority] || "backup"}">
+        <span class="priority-badge">${escapeHtml(c.priority)}</span>
+        <h4>${escapeHtml(c.name)}</h4>
+        <p class="role">${escapeHtml(c.role)}</p>
+        <button type="button" class="btn btn-danger btn-sm" data-id="${escapeAttr(c.id)}">Delete</button>
+      </div>
+    `).join("");
+    grid.querySelectorAll("[data-id]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        setWishlist(getWishlist().filter((x) => x.id !== btn.dataset.id));
+        renderWishlist();
+      });
+    });
+  }
+
+  document.getElementById("addCompany").addEventListener("click", () => {
+    const name = document.getElementById("coName").value.trim();
+    if (!name) return;
+    const list = getWishlist();
+    list.push({
+      id: uid(),
+      name,
+      role: document.getElementById("coRole").value,
+      priority: document.getElementById("coPriority").value
+    });
+    setWishlist(list);
+    document.getElementById("coName").value = "";
+    renderWishlist();
+  });
+
+  document.getElementById("wishFilters").addEventListener("click", (e) => {
+    const btn = e.target.closest("button[data-filter]");
+    if (!btn) return;
+    wishFilter = btn.dataset.filter;
+    document.querySelectorAll("#wishFilters button").forEach((b) => b.classList.toggle("active", b === btn));
+    renderWishlist();
+  });
+
+  function getLc() {
+    return load(STORAGE.leetcode, []);
+  }
+
+  function setLc(list) {
+    save(STORAGE.leetcode, list);
+  }
+
+  function renderLc() {
+    const diffF = document.getElementById("filterDiff").value;
+    const statF = document.getElementById("filterStatus").value;
+    let list = getLc();
+    if (diffF !== "all") list = list.filter((p) => p.difficulty === diffF);
+    if (statF !== "all") list = list.filter((p) => p.status === statF);
+
+    const all = getLc();
+    const solved = all.filter((p) => p.status === "Solved").length;
+    document.getElementById("lcSolved").textContent = solved;
+    document.getElementById("lcTotal").textContent = all.length;
+
+    const tbody = document.getElementById("lcTableBody");
+    if (!list.length) {
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:2rem;">No problems match filters.</td></tr>';
+      return;
+    }
+    const diffClass = { Easy: "diff-easy", Medium: "diff-medium", Hard: "diff-hard" };
+    tbody.innerHTML = list.map((p) => `
+      <tr>
+        <td>${escapeHtml(p.name)}</td>
+        <td class="${diffClass[p.difficulty] || ""}">${escapeHtml(p.difficulty)}</td>
+        <td>${escapeHtml(p.topic || "—")}</td>
+        <td class="${p.status === "Solved" ? "badge-solved" : "badge-unsolved"}">${escapeHtml(p.status)}</td>
+        <td><button type="button" class="btn btn-danger btn-sm" data-lc-id="${escapeAttr(p.id)}">Remove</button></td>
+      </tr>
+    `).join("");
+
+    tbody.querySelectorAll("[data-lc-id]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        setLc(getLc().filter((x) => x.id !== btn.dataset.lcId));
+        renderLc();
+      });
+    });
+  }
+
+  document.getElementById("addLc").addEventListener("click", () => {
+    const name = document.getElementById("lcName").value.trim();
+    if (!name) return;
+    const list = getLc();
+    list.push({
+      id: uid(),
+      name,
+      difficulty: document.getElementById("lcDiff").value,
+      topic: document.getElementById("lcTopic").value.trim(),
+      status: document.getElementById("lcStatus").value
+    });
+    setLc(list);
+    document.getElementById("lcName").value = "";
+    document.getElementById("lcTopic").value = "";
+    renderLc();
+  });
+
+  ["filterDiff", "filterStatus"].forEach((id) => {
+    document.getElementById(id).addEventListener("change", renderLc);
+  });
+
+  function getInterviews() {
+    return load(STORAGE.interviews, []);
+  }
+
+  function setInterviews(list) {
+    save(STORAGE.interviews, list);
+  }
+
+  function renderInterviews() {
+    const list = [...getInterviews()].sort((a, b) => new Date(b.date) - new Date(a.date));
+    const container = document.getElementById("interviewList");
+    if (!list.length) {
+      container.innerHTML = '<p class="empty-state">No interview notes yet.</p>';
+      return;
+    }
+    const outcomeClass = {
+      Selected: "outcome-selected",
+      Rejected: "outcome-rejected",
+      Pending: "outcome-pending"
+    };
+    const tagClass = {
+      Selected: "selected",
+      Rejected: "rejected",
+      Pending: "pending"
+    };
+    container.innerHTML = list.map((i) => `
+      <div class="interview-card ${outcomeClass[i.outcome] || "outcome-pending"}" data-id="${escapeAttr(i.id)}">
+        <div class="interview-head">
+          <div class="interview-meta">
+            <strong>${escapeHtml(i.company)}</strong>
+            <span>${formatDate(i.date)}</span>
+            <span>· ${escapeHtml(i.round)}</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:0.75rem;">
+            <span class="outcome-tag ${tagClass[i.outcome] || "pending"}">${escapeHtml(i.outcome)}</span>
+            <span class="chevron">▼</span>
+          </div>
+        </div>
+        <div class="interview-body">
+          <p>${escapeHtml(i.asked || "(No details)")}</p>
+          <button type="button" class="btn btn-danger btn-sm" data-del-int="${escapeAttr(i.id)}" style="margin-top:0.75rem;">Delete</button>
+        </div>
+      </div>
+    `).join("");
+
+    container.querySelectorAll(".interview-card").forEach((card) => {
+      const head = card.querySelector(".interview-head");
+      head.addEventListener("click", (e) => {
+        if (e.target.closest("[data-del-int]")) return;
+        card.classList.toggle("open");
+      });
+    });
+    container.querySelectorAll("[data-del-int]").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        setInterviews(getInterviews().filter((x) => x.id !== btn.dataset.delInt));
+        renderInterviews();
+      });
+    });
+  }
+
+  document.getElementById("addInterview").addEventListener("click", () => {
+    const company = document.getElementById("intCompany").value.trim();
+    const date = document.getElementById("intDate").value;
+    if (!company || !date) return;
+    const list = getInterviews();
+    list.push({
+      id: uid(),
+      company,
+      date,
+      round: document.getElementById("intRound").value,
+      asked: document.getElementById("intAsked").value.trim(),
+      outcome: document.getElementById("intOutcome").value
+    });
+    setInterviews(list);
+    document.getElementById("intCompany").value = "";
+    document.getElementById("intAsked").value = "";
+    renderInterviews();
+  });
+
+  function getMocks() {
+    return load(STORAGE.mocks, []);
+  }
+
+  function setMocks(list) {
+    save(STORAGE.mocks, list);
+  }
+
+  function daysUntil(dateStr, timeStr) {
+    const d = parseMockDateTime(dateStr, timeStr);
+    const now = new Date();
+    const diff = d - now;
+    const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+    return days;
+  }
+
+  function parseMockDateTime(dateStr, timeStr) {
+    const t = timeStr || "23:59";
+    return new Date(dateStr + "T" + t);
+  }
+
+  function formatMockCountdown(dateStr, timeStr, done) {
+    if (done) return "Completed";
+    const d = parseMockDateTime(dateStr, timeStr);
+    const now = new Date();
+    if (d < now) return "Past due";
+    const days = daysUntil(dateStr, timeStr);
+    if (days === 0) return "Today";
+    if (days === 1) return "1 day left";
+    return days + " days left";
+  }
+
+  function renderMocks() {
+    const list = getMocks();
+    const upcoming = list.filter((m) => !m.done);
+    const doneList = list.filter((m) => m.done);
+    const sortedUp = [...upcoming].sort((a, b) => {
+      const da = parseMockDateTime(a.date, a.time);
+      const db = parseMockDateTime(b.date, b.time);
+      return da - db;
+    });
+    const sortedDone = [...doneList].sort((a, b) => new Date(b.date) - new Date(a.date));
+    const display = [...sortedUp, ...sortedDone];
+    const grid = document.getElementById("mockGrid");
+    if (!display.length) {
+      grid.innerHTML = '<p class="empty-state">No mock interviews scheduled.</p>';
+      return;
+    }
+    grid.innerHTML = display.map((m) => {
+      const dt = new Date(m.date + "T12:00:00");
+      const day = dt.getDate();
+      const mon = dt.toLocaleString("en-US", { month: "short" });
+      const year = dt.getFullYear();
+      return `
+        <div class="mock-card ${m.done ? "done" : ""}">
+          <div class="mock-date-box">
+            <span class="mock-day">${day}</span>
+            <div>
+              <div class="mock-month-year">${mon} ${year}</div>
+              <div class="mock-detail" style="margin-top:0.25rem;"><strong>Time:</strong> ${escapeHtml(m.time || "—")}</div>
+            </div>
+          </div>
+          <div class="countdown">${escapeHtml(formatMockCountdown(m.date, m.time, m.done))}</div>
+          <div class="mock-detail"><strong>With:</strong> ${escapeHtml(m.withWhom)}</div>
+          <div class="mock-detail"><strong>Topic:</strong> ${escapeHtml(m.topic || "—")}</div>
+          ${!m.done ? `<button type="button" class="btn btn-neon btn-sm" data-mock-done="${escapeAttr(m.id)}" style="margin-top:0.85rem;">Mark as Done</button>` : ""}
+        </div>`;
+    }).join("");
+
+    grid.querySelectorAll("[data-mock-done]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const mocks = getMocks();
+        const item = mocks.find((x) => x.id === btn.dataset.mockDone);
+        if (item) item.done = true;
+        setMocks(mocks);
+        renderMocks();
+      });
+    });
+  }
+
+  document.getElementById("addMock").addEventListener("click", () => {
+    const date = document.getElementById("mockDate").value;
+    const time = document.getElementById("mockTime").value;
+    const topic = document.getElementById("mockTopic").value.trim();
+    if (!date || !time) return;
+    const list = getMocks();
+    list.push({
+      id: uid(),
+      date,
+      time,
+      withWhom: document.getElementById("mockWith").value,
+      topic,
+      done: false
+    });
+    setMocks(list);
+    document.getElementById("mockTopic").value = "";
+    renderMocks();
+  });
+
+  function todayStr() {
+    const d = new Date();
+    return d.toISOString().slice(0, 10);
+  }
+
+  function getDailyNotes() {
+    return load(STORAGE.dailyNotes, {});
+  }
+
+  function setDailyNotes(obj) {
+    save(STORAGE.dailyNotes, obj);
+  }
+
+  function renderDailyNotes() {
+    const notes = getDailyNotes();
+    const today = todayStr();
+    const ta = document.getElementById("dailyNoteInput");
+    if (typeof notes[today] === "string") ta.value = notes[today];
+    else ta.value = "";
+
+    renderNotesHistoryOnly();
+  }
+
+  function persistTodayNote() {
+    const text = document.getElementById("dailyNoteInput").value;
+    const notes = getDailyNotes();
+    notes[todayStr()] = text;
+    setDailyNotes(notes);
+  }
+
+  let noteDebounce;
+  document.getElementById("dailyNoteInput").addEventListener("input", () => {
+    clearTimeout(noteDebounce);
+    noteDebounce = setTimeout(() => {
+      persistTodayNote();
+      renderNotesHistoryOnly();
+    }, 400);
+  });
+
+  document.getElementById("saveDailyNote").addEventListener("click", () => {
+    persistTodayNote();
+    renderDailyNotes();
+  });
+
+  function renderNotesHistoryOnly() {
+    const notes = getDailyNotes();
+    const hist = document.getElementById("notesHistory");
+    const rows = [];
+    for (let i = 0; i < 7; i++) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const key = d.toISOString().slice(0, 10);
+      const label = d.toLocaleDateString("en-US", {
+        weekday: "short",
+        month: "short",
+        day: "numeric",
+        year: "numeric"
+      });
+      const text = notes[key];
+      rows.push(`
+        <div class="note-day ${text ? "" : "empty-note"}">
+          <div class="date-label">${escapeHtml(label)}</div>
+          <p>${text ? escapeHtml(text) : "No note saved."}</p>
+        </div>
+      `);
+    }
+    hist.innerHTML = rows.join("");
+  }
+
+  function escapeHtml(s) {
+    if (s == null) return "";
+    const div = document.createElement("div");
+    div.textContent = s;
+    return div.innerHTML;
+  }
+
+  function escapeAttr(s) {
+    return String(s).replace(/"/g, "&quot;");
+  }
+
+  function formatDate(iso) {
+    if (!iso) return "";
+    const d = new Date(iso + "T12:00:00");
+    return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  }
+
+  /* Navigation */
+  const sections = {
+    dsa: document.getElementById("section-dsa"),
+    wishlist: document.getElementById("section-wishlist"),
+    leetcode: document.getElementById("section-leetcode"),
+    interviews: document.getElementById("section-interviews"),
+    mocks: document.getElementById("section-mocks"),
+    notes: document.getElementById("section-notes")
+  };
+
+  function showSection(id) {
+    Object.keys(sections).forEach((k) => {
+      sections[k].classList.toggle("active", k === id);
+    });
+    document.querySelectorAll(".nav-links a").forEach((a) => {
+      a.classList.toggle("active", a.dataset.section === id);
+    });
+    if (id === "notes") renderDailyNotes();
+    if (id === "mocks") renderMocks();
+  }
+
+  document.querySelectorAll(".nav-links a").forEach((a) => {
+    a.addEventListener("click", (e) => {
+      e.preventDefault();
+      showSection(a.dataset.section);
+      closeSidebar();
+    });
+  });
+
+  const sidebar = document.getElementById("sidebar");
+  const overlay = document.getElementById("sidebarOverlay");
+  const menuToggle = document.getElementById("menuToggle");
+
+  function openSidebar() {
+    sidebar.classList.add("open");
+    overlay.classList.add("visible");
+  }
+
+  function closeSidebar() {
+    sidebar.classList.remove("open");
+    overlay.classList.remove("visible");
+  }
+
+  menuToggle.addEventListener("click", () => {
+    if (sidebar.classList.contains("open")) closeSidebar();
+    else openSidebar();
+  });
+
+  overlay.addEventListener("click", closeSidebar);
+
+  /* Auto-save daily note draft optional: we save on button only per spec */
+
+  renderDsa();
+  renderWishlist();
+  renderLc();
+  renderInterviews();
+  renderMocks();
+  renderDailyNotes();
+
+  /* Refresh mock countdowns periodically */
+  setInterval(() => {
+    const active = document.getElementById("section-mocks").classList.contains("active");
+    if (active) renderMocks();
+  }, 60000);
+})();
+  </script>
+</body>
+</html>
